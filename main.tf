@@ -22,22 +22,22 @@ module "aks" {
   }
 }
 
-# provider "helm" {
-#   kubernetes {
-#     config_path = module.aks.kube_config_path["kube1"]
-#   }
-# }
-
 provider "helm" {
   kubernetes {
-    host                   = module.aks.kube_config["kube1"].0.host
-    username               = module.aks.kube_config["kube1"].0.username
-    password               = module.aks.kube_config["kube1"].0.password
-    client_certificate     = base64decode(module.aks.kube_config["kube1"].0.client_certificate)
-    client_key             = base64decode(module.aks.kube_config["kube1"].0.client_key)
-    cluster_ca_certificate = base64decode(module.aks.kube_config["kube1"].0.cluster_ca_certificate)
+    config_path = module.aks.kube_config_path["kube1"]
   }
 }
+
+# provider "helm" {
+#   kubernetes {
+#     host                   = module.aks.kube_config["kube1"].0.host
+#     username               = module.aks.kube_config["kube1"].0.username
+#     password               = module.aks.kube_config["kube1"].0.password
+#     client_certificate     = base64decode(module.aks.kube_config["kube1"].0.client_certificate)
+#     client_key             = base64decode(module.aks.kube_config["kube1"].0.client_key)
+#     cluster_ca_certificate = base64decode(module.aks.kube_config["kube1"].0.cluster_ca_certificate)
+#   }
+# }
 
 module "helm" {
   source = "git@github.com:flavius-dinu/terraform-helm-release.git?ref=v1.0.0"
