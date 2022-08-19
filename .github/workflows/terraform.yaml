@@ -1,0 +1,47 @@
+on:
+  workflow_dispatch:
+    inputs:
+      terraform_operation:
+        description: "Terraform operation: plan, apply, destroy"
+        required: true
+        default: "plan"
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+
+jobs:
+  terraform:
+    name: "terraform"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform plan
+        run: terraform plan
+        id: plan
+        if: "${{ github.event.inputs.terraform_operation == 'plan' }}"
+
+      - name: Terraform apply
+        run: terraform apply --auto-approve
+        id: apply
+        if: "${{ github.event.inputs.terraform_operation == 'apply' }}"
+
+      - name: Terraform destroy
+        run: terraform destroy --auto-approve
+        id: destroy
+        if: "${{ github.event.inputs.terraform_operation == 'destroy' }}"
